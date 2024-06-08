@@ -1,12 +1,14 @@
-import { ArrowButton } from 'components/arrow-button';
-import { Button } from 'components/button';
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { FormEvent, useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import styles from './ArticleParamsForm.module.scss';
+import { ArticleParamsForm } from './ArticleParamsForm';
+import { ArrowButton } from '../arrow-button/ArrowButton';
 import { Text } from '../text';
 import { Select } from '../select';
 import { RadioGroup } from '../radio-group';
 import { Separator } from '../separator';
+import { Button } from '../button/Button';
 import {
 	OptionType,
 	fontFamilyOptions,
@@ -18,50 +20,35 @@ import {
 	ArticleStateType,
 } from '../../constants/articleProps';
 
-type TArticleParamsFormProps = {
-	setSettings: (value: ArticleStateType) => void;
+const meta: Meta<typeof ArticleParamsForm> = {
+	component: ArticleParamsForm,
+	tags: ['autodocs'],
 };
 
-export const ArticleParamsForm = ({ setSettings }: TArticleParamsFormProps) => {
-	//Состояние для открытия/закрытия формы
-	const [isOpen, setIsOpen] = useState<boolean>(false);
+export default meta;
+type Story = StoryObj<typeof ArticleParamsForm>;
 
-	//Настройки, которые указывает пользователь в процессе заполнения формы
+const ArticleParamsFormModel = () => {
 	const [userSettings, setUserSettings] =
 		useState<ArticleStateType>(defaultArticleState);
-
-	//Функция для применения настроек, указанных пользователем в форме
-	function submitForm(event: FormEvent) {
-		event.preventDefault();
-		setSettings(userSettings);
-	}
-
-	//Функция для сброса настроек к дефолтным
-	function resetForm(event: FormEvent) {
-		event.preventDefault();
-		setUserSettings(defaultArticleState);
-	}
-
-	//Универсальная функция для записи опции поля формы в пользовательские настройки
+	const [isOpen, setIsOpen] = useState<boolean>(true);
 	function saveOption(option: keyof ArticleStateType) {
 		return (selected: OptionType): void => {
 			setUserSettings({ ...userSettings, [option]: selected });
 		};
 	}
-
-	//Найдем общий контейнер компонента
 	const refContainer = useRef<HTMLDivElement | null>(null);
-
-	//Функция для закрытия формы настроек по нажатию клавишей мыши вне этой формы, если она открыта
 	function handleMouseClick(event: MouseEvent) {
-		if (refContainer.current && (event.target as Node)) {
-			if (!refContainer.current.contains(event.target as Node) && isOpen) {
+		if (refContainer.current && (event.target as HTMLElement)) {
+			if (
+				!refContainer.current.contains(event.target as HTMLElement) &&
+				isOpen
+			) {
 				setIsOpen(false);
 			}
 		}
 	}
 
-	//Привяжем к window через слушаетель событий функцию handleMouseClick после рендера компонента и отвяжем после размонтирования компонента
 	useEffect(() => {
 		window.addEventListener('mousedown', handleMouseClick);
 		return () => {
@@ -73,13 +60,20 @@ export const ArticleParamsForm = ({ setSettings }: TArticleParamsFormProps) => {
 		<div ref={refContainer} className={styles.wrapperForm}>
 			<ArrowButton
 				isOpen={isOpen}
-				handleClickArrow={() => {
-					setIsOpen(!isOpen);
-				}}
+				handleClickArrow={() => setIsOpen(!isOpen)}
 			/>
 			<aside
 				className={clsx(styles.container, isOpen && styles.container_open)}>
-				<form className={styles.form} onSubmit={submitForm} onReset={resetForm}>
+				<form
+					className={styles.form}
+					onSubmit={(event: FormEvent) => {
+						event.preventDefault();
+						console.log('Пользовательские настройки применены');
+					}}
+					onReset={(event: FormEvent) => {
+						event.preventDefault();
+						console.log('Настройки сброщены до дефолтных');
+					}}>
 					<Text
 						size={31}
 						weight={800}
@@ -129,4 +123,8 @@ export const ArticleParamsForm = ({ setSettings }: TArticleParamsFormProps) => {
 			</aside>
 		</div>
 	);
+};
+
+export const ArticleParamsFormStory: Story = {
+	render: () => <ArticleParamsFormModel />,
 };
