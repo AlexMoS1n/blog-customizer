@@ -24,7 +24,7 @@ type TArticleParamsFormProps = {
 
 export const ArticleParamsForm = ({ setSettings }: TArticleParamsFormProps) => {
 	//Состояние для открытия/закрытия формы
-	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
 	//Настройки, которые указывает пользователь в процессе заполнения формы
 	const [userSettings, setUserSettings] =
@@ -56,8 +56,8 @@ export const ArticleParamsForm = ({ setSettings }: TArticleParamsFormProps) => {
 	//Функция для закрытия формы настроек по нажатию клавишей мыши вне этой формы, если она открыта
 	function handleMouseClick(event: MouseEvent) {
 		if (refContainer.current && (event.target as Node)) {
-			if (!refContainer.current.contains(event.target as Node) && isOpen) {
-				setIsOpen(false);
+			if (!refContainer.current.contains(event.target as Node) && isMenuOpen) {
+				setIsMenuOpen(false);
 			}
 		}
 	}
@@ -68,18 +68,18 @@ export const ArticleParamsForm = ({ setSettings }: TArticleParamsFormProps) => {
 		return () => {
 			window.removeEventListener('mousedown', handleMouseClick);
 		};
-	}, [isOpen]);
+	}, [isMenuOpen]);
 
 	return (
 		<div ref={refContainer} className={styles.wrapperForm}>
 			<ArrowButton
-				isOpen={isOpen}
+				isMenuOpen={isMenuOpen}
 				handleClickArrow={() => {
-					setIsOpen(!isOpen);
+					setIsMenuOpen(!isMenuOpen);
 				}}
 			/>
 			<aside
-				className={clsx(styles.container, isOpen && styles.container_open)}>
+				className={clsx(styles.container, isMenuOpen && styles.container_open)}>
 				<form className={styles.form} onSubmit={submitForm} onReset={resetForm}>
 					<Text
 						size={31}

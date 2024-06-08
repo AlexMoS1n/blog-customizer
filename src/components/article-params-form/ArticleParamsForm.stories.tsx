@@ -31,7 +31,7 @@ type Story = StoryObj<typeof ArticleParamsForm>;
 const ArticleParamsFormModel = () => {
 	const [userSettings, setUserSettings] =
 		useState<ArticleStateType>(defaultArticleState);
-	const [isOpen, setIsOpen] = useState<boolean>(true);
+	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(true);
 	function saveOption(option: keyof ArticleStateType) {
 		return (selected: OptionType): void => {
 			setUserSettings({ ...userSettings, [option]: selected });
@@ -39,12 +39,9 @@ const ArticleParamsFormModel = () => {
 	}
 	const refContainer = useRef<HTMLDivElement | null>(null);
 	function handleMouseClick(event: MouseEvent) {
-		if (refContainer.current && (event.target as HTMLElement)) {
-			if (
-				!refContainer.current.contains(event.target as HTMLElement) &&
-				isOpen
-			) {
-				setIsOpen(false);
+		if (refContainer.current && (event.target as Node)) {
+			if (!refContainer.current.contains(event.target as Node) && isMenuOpen) {
+				setIsMenuOpen(false);
 			}
 		}
 	}
@@ -54,16 +51,16 @@ const ArticleParamsFormModel = () => {
 		return () => {
 			window.removeEventListener('mousedown', handleMouseClick);
 		};
-	}, [isOpen]);
+	}, [isMenuOpen]);
 
 	return (
 		<div ref={refContainer} className={styles.wrapperForm}>
 			<ArrowButton
-				isOpen={isOpen}
-				handleClickArrow={() => setIsOpen(!isOpen)}
+				isMenuOpen={isMenuOpen}
+				handleClickArrow={() => setIsMenuOpen(!isMenuOpen)}
 			/>
 			<aside
-				className={clsx(styles.container, isOpen && styles.container_open)}>
+				className={clsx(styles.container, isMenuOpen && styles.container_open)}>
 				<form
 					className={styles.form}
 					onSubmit={(event: FormEvent) => {

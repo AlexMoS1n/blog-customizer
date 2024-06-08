@@ -16,7 +16,7 @@ export const ArrowButtonOpenStory: Story = {
 		return (
 			<>
 				<ArrowButton
-					isOpen={true}
+					isMenuOpen={true}
 					handleClickArrow={() => console.log('Открытие настроек')}
 				/>
 			</>
@@ -31,7 +31,7 @@ export const ArrowButtonCloseStory: Story = {
 		return (
 			<>
 				<ArrowButton
-					isOpen={false}
+					isMenuOpen={false}
 					handleClickArrow={() => console.log('Закрытие настроек')}
 				/>
 			</>
