@@ -40,6 +40,7 @@ export const ArticleParamsForm = ({ setSettings }: TArticleParamsFormProps) => {
 	function resetForm(event: FormEvent) {
 		event.preventDefault();
 		setUserSettings(defaultArticleState);
+		setSettings(defaultArticleState);
 	}
 
 	//Универсальная функция для записи опции поля формы в пользовательские настройки
